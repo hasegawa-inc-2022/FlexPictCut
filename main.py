@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import os
+import sys
+
 from PIL import Image, ImageTk
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
@@ -55,6 +57,22 @@ class ScaledPictCutterV4:
         self.canvas.bind("<ButtonPress-1>", self.on_click)
         self.canvas.bind("<B1-Motion>", self.move_rect)
         self.root.bind("<Configure>", self.on_window_resize)
+
+        # --- アイコン設定の追加 ---
+        # 1. 実行環境（EXEかスクリプトか）からアイコンのパスを特定
+        if getattr(sys, 'frozen', False):
+            # EXE化されている場合（PyInstallerの内部一時フォルダを参照）
+            icon_path = os.path.join(sys._MEIPASS, "app_ico.ico")
+        else:
+            # 通常実行の場合
+            icon_path = os.path.join(os.path.dirname(__file__), "public", "icon", "app_ico.ico")
+
+        # 2. ウィンドウアイコンとして設定
+        try:
+            self.root.iconbitmap(icon_path)
+        except Exception:
+            # アイコンがない場合でもエラーで止まらないようにする
+            pass
 
     def update_rect_size(self):
         """入力された数値で枠のサイズを更新する"""
